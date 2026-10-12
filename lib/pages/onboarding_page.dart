@@ -69,7 +69,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   Image.network(
                     'https://images.unsplash.com/${slide['photo']}?auto=format&fit=crop&w=1400&q=85',
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(color: background),
+                    errorBuilder: (_, _, _) => Container(color: background),
                   ),
                   Container(
                     decoration: const BoxDecoration(

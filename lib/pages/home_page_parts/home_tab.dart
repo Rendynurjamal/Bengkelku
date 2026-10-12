@@ -667,7 +667,6 @@ extension _HomeTab on _HomePageState {
             onPageChanged: (index) => _update(() => bannerIndex = index),
             itemBuilder: (context, index) {
               final promo = promos[index];
-              final imageAsset = AppImages.promos[index % AppImages.promos.length];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2),
                 child: TapScale(
@@ -1057,105 +1056,6 @@ extension _HomeTab on _HomePageState {
       default:
         return 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=85';
     }
-  }
-
-  Widget _serviceCard({
-    required IconData icon,
-    required String title,
-    required String description,
-    required String price,
-    required VoidCallback onTap,
-  }) {
-    return TapScale(
-      onTap: onTap,
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(color: surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: borderSubtle)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 140,
-              width: double.infinity,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    _servicePhoto(title),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: surfaceAlt,
-                      child: Icon(icon, color: gold, size: 48),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.transparent, surface.withValues(alpha: 0.9)],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 12,
-                    top: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(color: gold, borderRadius: BorderRadius.circular(20)),
-                      child: Text(price, style: const TextStyle(color: Color(0xFF1A1200), fontWeight: FontWeight.w800, fontSize: 12)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(color: surfaceAlt, borderRadius: BorderRadius.circular(12), border: Border.all(color: borderSubtle)),
-                    child: Icon(icon, color: gold, size: 22),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(title, style: const TextStyle(color: textPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 3),
-                        Text(description, style: const TextStyle(color: textSecondary, fontSize: 12.5), maxLines: 2, overflow: TextOverflow.ellipsis),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.arrow_forward, color: gold, size: 20),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _gallerySection() {
-    return SizedBox(
-      height: 130,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: AppImages.gallery.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, i) => AppImage(
-          AppImages.gallery[i],
-          width: i == 0 ? 210 : 150,
-          height: 130,
-          borderRadius: BorderRadius.circular(18),
-          fallbackIcon: Icons.photo_outlined,
-        ),
-      ),
-    );
   }
 
   Widget _sectionTitle(String title) {

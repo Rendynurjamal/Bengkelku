@@ -159,7 +159,7 @@ class DetailServicePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        isFree ? '🎉 GRATIS' : '🔥 ${_effectiveLabel}',
+                        isFree ? '🎉 GRATIS' : '🔥 $_effectiveLabel',
                         style: const TextStyle(
                           color: dark,
                           fontWeight: FontWeight.bold,
@@ -307,7 +307,7 @@ class DetailServicePage extends StatelessWidget {
                         Expanded(
                           child: Text(
                             hasDiscount
-                                ? 'Harga di atas sudah termasuk potongan ${_effectiveLabel}. Harga final bisa menyesuaikan jenis kendaraan.'
+                                ? 'Harga di atas sudah termasuk potongan $_effectiveLabel. Harga final bisa menyesuaikan jenis kendaraan.'
                                 : 'Harga dapat berubah tergantung kondisi kendaraan dan kebutuhan servis.',
                             style: const TextStyle(
                               color: Colors.black54,

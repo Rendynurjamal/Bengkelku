@@ -38,7 +38,7 @@ extension _HistoryTab on _HomePageState {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: garage.length + 1,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  separatorBuilder: (_, _) => const SizedBox(width: 8),
                   itemBuilder: (context, index) {
                     final String key =
                         index == 0 ? 'Semua' : garage[index - 1]['plate']!;

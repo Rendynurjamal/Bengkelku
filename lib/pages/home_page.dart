@@ -8,7 +8,6 @@ import '../models/mechanic_data.dart';
 import '../models/vehicle_data.dart';
 import '../theme/app_colors.dart';
 import '../widgets/tap_scale.dart';
-import '../widgets/app_image.dart';
 import 'about_bengkel_page.dart';
 
 part 'home_page_parts/home_tab.dart';

@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
           Image.network(
             'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1800&q=85',
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => const ColoredBox(color: Color(0xFF07111E)),
+            errorBuilder: (_, _, _) => const ColoredBox(color: Color(0xFF07111E)),
             loadingBuilder: (context, child, progress) => child,
           ),
           const DecoratedBox(
