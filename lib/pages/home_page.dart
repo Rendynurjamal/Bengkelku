@@ -8,6 +8,7 @@ import '../models/loyalty_data.dart';
 import '../models/mechanic_data.dart';
 import '../models/vehicle_data.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_image.dart';
 import '../widgets/mechanic_widgets.dart';
 import '../widgets/receipt_sheets.dart';
 import '../widgets/schedule_picker.dart';
