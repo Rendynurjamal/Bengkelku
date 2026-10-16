@@ -92,6 +92,26 @@ class _HomePageState extends State<HomePage> {
   // Dipakai oleh file di home_page_parts/ (extension tidak boleh memanggil setState langsung).
   void _update(VoidCallback fn) => setState(fn);
 
+  @override
+  void initState() {
+    super.initState();
+    BookingData.changes.addListener(_onBookingChanged);
+    BookingData.requestedTab.addListener(_onTabRequested);
+  }
+
+  // Booking baru / status berubah -> refresh Home & Riwayat otomatis.
+  void _onBookingChanged() {
+    if (mounted) setState(() {});
+  }
+
+  // Halaman lain (mis. ServicePage) minta balik ke tab tertentu.
+  void _onTabRequested() {
+    final tab = BookingData.requestedTab.value;
+    if (tab == null) return;
+    BookingData.requestedTab.value = null;
+    if (mounted) setState(() => selectedIndex = tab);
+  }
+
   int selectedIndex = 0;
 
   // Preferensi Pengaturan aktif selama aplikasi berjalan.
@@ -319,6 +339,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    BookingData.changes.removeListener(_onBookingChanged);
+    BookingData.requestedTab.removeListener(_onTabRequested);
     searchController.dispose();
     _bannerController.dispose();
     super.dispose();

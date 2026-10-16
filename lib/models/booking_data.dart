@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class BookingData {
   final String ownerName;
   final String plateNumber;
@@ -28,6 +30,16 @@ class BookingData {
   }) : createdAt = createdAt ?? DateTime.now();
 
   static final List<BookingData> bookings = [];
+
+  /// Naik setiap kali data booking berubah. HomePage mendengarkan ini
+  /// supaya antrian langsung ter-refresh tanpa perlu pindah tab dulu.
+  static final ValueNotifier<int> changes = ValueNotifier<int>(0);
+
+  /// Diisi halaman lain untuk meminta HomePage pindah tab
+  /// (0 = Home, 1 = Layanan, 2 = Riwayat, 3 = Profil). HomePage me-reset ke null.
+  static final ValueNotifier<int?> requestedTab = ValueNotifier<int?>(null);
+
+  static void notifyChanged() => changes.value++;
   static double pendingVoucherPercent = 0;
   static String? pendingVoucherLabel;
 
@@ -54,6 +66,7 @@ class BookingData {
     );
     booking.estimatedFinish = booking.estimatedStart!.add(_durationToEstimate(serviceDuration));
     bookings.insert(0, booking);
+    notifyChanged();
     return booking;
   }
 

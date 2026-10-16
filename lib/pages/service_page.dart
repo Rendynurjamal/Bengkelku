@@ -276,8 +276,11 @@ class _ServicePageState extends State<ServicePage> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
+                // Minta HomePage pindah ke tab Home (tempat kartu antrian),
+                // lalu tutup dialog + semua halaman booking sampai ke Home.
+                BookingData.requestedTab.value = 0;
+                BookingData.notifyChanged();
+                Navigator.of(context).popUntil((route) => route.isFirst);
               },
               child: const Text(
                 'SELESAI',
