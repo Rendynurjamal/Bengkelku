@@ -97,6 +97,25 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     BookingData.changes.addListener(_onBookingChanged);
     BookingData.requestedTab.addListener(_onTabRequested);
+    BookingData.justCompleted.addListener(_onServiceCompleted);
+    BookingData.startTicker();
+  }
+
+  // Servis selesai -> munculkan notifikasi singkat.
+  void _onServiceCompleted() {
+    final done = BookingData.justCompleted.value;
+    if (done == null) return;
+    BookingData.justCompleted.value = null;
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${done.serviceName} (${done.plateNumber}) selesai! Kendaraan siap diambil.',
+        ),
+        backgroundColor: Colors.green.shade700,
+        duration: const Duration(seconds: 4),
+      ),
+    );
   }
 
   // Booking baru / status berubah -> refresh Home & Riwayat otomatis.
@@ -341,6 +360,8 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     BookingData.changes.removeListener(_onBookingChanged);
     BookingData.requestedTab.removeListener(_onTabRequested);
+    BookingData.justCompleted.removeListener(_onServiceCompleted);
+    BookingData.stopTicker();
     searchController.dispose();
     _bannerController.dispose();
     super.dispose();

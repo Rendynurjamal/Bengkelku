@@ -389,15 +389,10 @@ extension _HomeTab on _HomePageState {
               ),
               const SizedBox(height: 20),
               _serviceTimeline(booking.status),
-              const SizedBox(height: 10),
-              Text(
-                booking.status == 'Menunggu Antrian'
-                    ? 'Antrean ke-${booking.queuePosition ?? '-'} • estimasi mulai ${booking.formattedEstimatedStart}'
-                    : booking.status == 'Sedang Dikerjakan'
-                        ? 'Estimasi selesai ${booking.formattedEstimatedFinish}'
-                        : 'Servis selesai',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: textSecondary, fontSize: 11),
+              const SizedBox(height: 16),
+              ValueListenableBuilder<int>(
+                valueListenable: BookingData.tick,
+                builder: (context, tickValue, child) => _queueLiveInfo(booking),
               ),
             ],
           ),
@@ -458,6 +453,77 @@ extension _HomeTab on _HomePageState {
           ),
         ),
       ],
+    );
+  }
+
+  /// Info antrian live: progress bar + hitung mundur (update tiap detik).
+  Widget _queueLiveInfo(BookingData booking) {
+    if (booking.status == 'Sedang Dikerjakan') {
+      final progress = booking.workProgress;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Sedang dikerjakan ${booking.mechanicName ?? 'montir'}',
+                style: const TextStyle(color: textPrimary, fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                '${(progress * 100).round()}%',
+                style: const TextStyle(color: gold, fontSize: 12, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: surfaceAlt,
+              valueColor: const AlwaysStoppedAnimation<Color>(gold),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Sisa waktu ${BookingData.formatCountdown(booking.secondsToFinish)} • selesai ±${booking.formattedEstimatedFinish}',
+            style: const TextStyle(color: textSecondary, fontSize: 11),
+          ),
+        ],
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: surfaceAlt,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.groups_outlined, color: gold, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Antrean ke-${booking.queuePosition ?? '-'}',
+                  style: const TextStyle(color: textPrimary, fontSize: 13, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Giliran dimulai dalam ${BookingData.formatCountdown(booking.secondsToStart)} • ±${booking.formattedEstimatedStart}',
+                  style: const TextStyle(color: textSecondary, fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
