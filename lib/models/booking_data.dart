@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import 'loyalty_data.dart';
+import 'mechanic_data.dart';
+
 class BookingData {
   final String ownerName;
   final String plateNumber;
@@ -12,6 +15,28 @@ class BookingData {
   final DateTime createdAt;
   String status;
   String? mechanicName;
+
+  /// ID unik booking (dipakai untuk nomor struk).
+  final int id;
+
+  /// Jadwal yang dipilih pengguna (tanggal + jam slot).
+  final DateTime? scheduledAt;
+
+  /// Harga sebelum diskon + info diskon (untuk struk).
+  final String basePrice;
+  final String? discountLabel;
+  final double discountPercent;
+
+  /// Ulasan setelah servis selesai (null = belum diulas).
+  int? rating;
+  String? review;
+  DateTime? reviewedAt;
+
+  /// Poin loyalty yang didapat dari booking ini.
+  int pointsEarned;
+
+  bool get isReviewed => rating != null;
+
   int? queuePosition;
   DateTime? estimatedStart;
   DateTime? estimatedFinish;
@@ -29,11 +54,20 @@ class BookingData {
     DateTime? createdAt,
     this.status = 'Menunggu Antrian',
     this.mechanicName,
+    this.scheduledAt,
+    String? basePrice,
+    this.discountLabel,
+    this.discountPercent = 0,
+    this.pointsEarned = 0,
     this.queuePosition,
     this.estimatedStart,
     this.estimatedFinish,
-  }) : createdAt = createdAt ?? DateTime.now(),
+  }) : id = _nextId++,
+       basePrice = basePrice ?? price,
+       createdAt = createdAt ?? DateTime.now(),
        statusChangedAt = createdAt ?? DateTime.now();
+
+  static int _nextId = 1;
 
   static final List<BookingData> bookings = [];
 
@@ -170,6 +204,11 @@ class BookingData {
     required String service,
     required String servicePrice,
     required String serviceDuration,
+    String? mechanicName,
+    DateTime? scheduledAt,
+    String? basePrice,
+    String? discountLabel,
+    double discountPercent = 0,
   }) {
     final now = DateTime.now();
     final activeCount = bookings.where((b) => b.status != 'Selesai').length;
@@ -181,11 +220,18 @@ class BookingData {
       price: servicePrice,
       duration: serviceDuration,
       createdAt: now,
+      mechanicName: mechanicName,
+      scheduledAt: scheduledAt,
+      basePrice: basePrice,
+      discountLabel: discountLabel,
+      discountPercent: discountPercent,
       queuePosition: activeCount + 1,
       estimatedStart: now.add(Duration(minutes: 30 * activeCount)),
     );
     booking.estimatedFinish = booking.estimatedStart!.add(_durationToEstimate(serviceDuration));
     bookings.insert(0, booking);
+    // Poin loyalty naik setiap kali booking dibuat.
+    booking.pointsEarned = LoyaltyData.award(booking.price);
     if (demoMode) _recomputeQueue();
     notifyChanged();
     return booking;
@@ -210,4 +256,120 @@ class BookingData {
 
   static String _formatTime(DateTime d) =>
       '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+
+  // ============================================================
+  // JADWAL & SLOT JAM
+  // ============================================================
+
+  static const List<String> slotTimes = [
+    '08:00', '09:00', '10:00', '11:00', '12:00',
+    '13:00', '14:00', '15:00', '16:00',
+  ];
+
+  /// Gabungkan tanggal + slot "HH:mm" jadi DateTime.
+  static DateTime slotDateTime(DateTime date, String slot) {
+    final parts = slot.split(':');
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+    );
+  }
+
+  static bool _sameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
+
+  /// Slot sudah lewat (hari ini, jam sudah berlalu / kurang dari 30 menit lagi).
+  static bool isSlotPast(DateTime date, String slot) {
+    final limit = DateTime.now().add(const Duration(minutes: 30));
+    return slotDateTime(date, slot).isBefore(limit);
+  }
+
+  /// Slot penuh? Penuh kalau lewat, sudah diisi booking lain untuk montir itu,
+  /// atau (simulasi bengkel ramai) jatah montir itu di jam tsb sudah terisi
+  /// pelanggan lain. Slot "ramai" ditentukan deterministik dari tanggal+jam+montir
+  /// supaya selalu konsisten, bukan acak tiap dibuka.
+  static bool isSlotTaken(DateTime date, String slot, String? mechanic) {
+    if (isSlotPast(date, slot)) return true;
+
+    final target = slotDateTime(date, slot);
+    final mechanics = MechanicData.mechanics.map((m) => m.name).toList();
+
+    bool bookedBy(String name) => bookings.any(
+          (b) =>
+              b.scheduledAt != null &&
+              b.mechanicName == name &&
+              b.scheduledAt!.isAtSameMomentAs(target),
+        );
+
+    bool busySeed(String name) {
+      final idx = mechanics.indexOf(name);
+      final hour = target.hour;
+      final seed = date.day * 31 + date.month * 17 + hour * 13 + idx * 7;
+      return seed % 5 == 0;
+    }
+
+    if (mechanic != null) return bookedBy(mechanic) || busySeed(mechanic);
+    // Belum pilih montir: penuh kalau semua montir tidak tersedia.
+    return mechanics.every((m) => bookedBy(m) || busySeed(m));
+  }
+
+  /// Slot mulai [start] dan [count]-1 slot sesudahnya (berurutan) semuanya kosong?
+  static bool isRangeFree(
+    DateTime date,
+    String start,
+    int count,
+    String? mechanic,
+  ) {
+    final i = slotTimes.indexOf(start);
+    if (i < 0 || i + count > slotTimes.length) return false;
+    for (int k = 0; k < count; k++) {
+      if (isSlotTaken(date, slotTimes[i + k], mechanic)) return false;
+    }
+    return true;
+  }
+
+  static String formatDate(DateTime d) {
+    const days = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
+    ];
+    return '${days[d.weekday - 1]}, ${d.day} ${months[d.month - 1]} ${d.year}';
+  }
+
+  String get formattedSchedule {
+    final s = scheduledAt;
+    if (s == null) return '-';
+    return '${formatDate(s)} • ${_formatTime(s)}';
+  }
+
+  // ============================================================
+  // HARGA (untuk struk)
+  // ============================================================
+
+  static int parseRupiah(String value) {
+    final digits = value.replaceAll(RegExp(r'[^0-9]'), '');
+    return digits.isEmpty ? 0 : int.parse(digits);
+  }
+
+  static String formatRupiah(int value) {
+    final str = value.toString();
+    final buffer = StringBuffer();
+    for (int i = 0; i < str.length; i++) {
+      if (i > 0 && (str.length - i) % 3 == 0) buffer.write('.');
+      buffer.write(str[i]);
+    }
+    return 'Rp$buffer';
+  }
+
+  /// Nilai diskon dalam rupiah (0 kalau harga tidak bisa dihitung).
+  int get discountAmount {
+    if (discountPercent <= 0) return 0;
+    final base = parseRupiah(basePrice);
+    if (discountPercent >= 1.0) return base;
+    return (base * discountPercent).round();
+  }
 }

@@ -37,13 +37,13 @@ extension _HomeTab on _HomePageState {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           RichText(
-                            text: const TextSpan(children: [
+                            text: TextSpan(children: [
                               TextSpan(text: 'Bengkel', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: textPrimary)),
                               TextSpan(text: 'Ku', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: gold)),
                             ]),
                           ),
                           const SizedBox(height: 4),
-                          const Text('Solusi servis kendaraan kamu', style: TextStyle(color: textSecondary)),
+                          Text('Solusi servis kendaraan kamu', style: TextStyle(color: textSecondary)),
                         ],
                       ),
                     ),
@@ -107,7 +107,7 @@ extension _HomeTab on _HomePageState {
                             ),
                           ),
                         ),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.all(20),
                           child: Align(
                             alignment: Alignment.centerLeft,
@@ -135,6 +135,8 @@ extension _HomeTab on _HomePageState {
                 _promoCarousel(),
                 const SizedBox(height: 22),
 
+                _towCard(),
+                const SizedBox(height: 22),
                 _sectionTitle('Menu Utama'),
                 const SizedBox(height: 14),
                 Row(
@@ -157,7 +159,7 @@ extension _HomeTab on _HomePageState {
                     width: double.infinity,
                     padding: const EdgeInsets.all(28),
                     decoration: BoxDecoration(color: surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: borderSubtle)),
-                    child: const Column(
+                    child: Column(
                       children: [
                         Icon(Icons.search_off, color: textSecondary, size: 30),
                         SizedBox(height: 10),
@@ -227,11 +229,11 @@ extension _HomeTab on _HomePageState {
                   width: double.infinity,
                   padding: const EdgeInsets.all(22),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [surfaceAlt, surface]),
+                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [surfaceAlt, surface]),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(color: gold.withValues(alpha: 0.2)),
                   ),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
@@ -290,13 +292,13 @@ extension _HomeTab on _HomePageState {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Servis Berikutnya', style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 15)),
+                    Text('Servis Berikutnya', style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 15)),
                     const SizedBox(height: 4),
                     Text(
                       overdue
                           ? 'Sudah lewat ${days.abs()} hari dari jadwal — yuk servis lagi'
                           : 'Sekitar $days hari lagi (± 3 bulan dari servis terakhir)',
-                      style: const TextStyle(color: textSecondary, fontSize: 12),
+                      style: TextStyle(color: textSecondary, fontSize: 12),
                     ),
                   ],
                 ),
@@ -337,12 +339,12 @@ extension _HomeTab on _HomePageState {
           children: [
             const Icon(Icons.check_circle_outline, color: gold, size: 32),
             const SizedBox(height: 10),
-            const Text(
+            Text(
               'Tidak ada servis yang sedang berjalan',
               style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            const Text(
+            Text(
               'Booking layanan untuk mulai proses servis.',
               style: TextStyle(color: textSecondary, fontSize: 12),
             ),
@@ -377,9 +379,9 @@ extension _HomeTab on _HomePageState {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(booking.status, style: const TextStyle(color: textPrimary, fontSize: 17, fontWeight: FontWeight.bold)),
+                        Text(booking.status, style: TextStyle(color: textPrimary, fontSize: 17, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 5),
-                        Text('${booking.serviceName} • ${booking.vehicleType} (${booking.plateNumber})', style: const TextStyle(color: textSecondary)),
+                        Text('${booking.serviceName} • ${booking.vehicleType} (${booking.plateNumber})', style: TextStyle(color: textSecondary)),
                         const SizedBox(height: 4),
                         Text('${booking.duration} • ${booking.price}', style: const TextStyle(color: goldSoft, fontWeight: FontWeight.w600)),
                       ],
@@ -413,38 +415,27 @@ extension _HomeTab on _HomePageState {
               Container(
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: gold.withValues(alpha: 0.4))),
-                child: CircleAvatar(
-                  radius: 25,
-                  backgroundColor: gold.withValues(alpha: 0.12),
-                  child: const Icon(Icons.engineering_outlined, color: gold, size: 26),
-                ),
+                child: MechanicAvatar(mechanic: MechanicData.byName(booking.mechanicName), radius: 25),
               ),
               const SizedBox(width: 15),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(booking.mechanicName ?? 'Menunggu penugasan', style: const TextStyle(color: textPrimary, fontSize: 17, fontWeight: FontWeight.bold)),
+                    Text(booking.mechanicName ?? 'Menunggu penugasan', style: TextStyle(color: textPrimary, fontSize: 17, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
-                    const Text('Teknisi BengkelKu', style: TextStyle(color: textSecondary)),
+                    Text(MechanicData.byName(booking.mechanicName)?.specialty ?? 'Teknisi BengkelKu', style: TextStyle(color: textSecondary)),
                     const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        ...List.generate(5, (i) {
-                          IconData starIcon;
-                          if (i < mechanicRating.floor()) {
-                            starIcon = Icons.star;
-                          } else if (i < mechanicRating) {
-                            starIcon = Icons.star_half;
-                          } else {
-                            starIcon = Icons.star_border;
-                          }
-                          return Icon(starIcon, color: gold, size: 15);
-                        }),
-                        const SizedBox(width: 6),
-                        Text('$mechanicRating ($mechanicReviewCount ulasan)', style: const TextStyle(color: textSecondary, fontSize: 11)),
-                      ],
-                    ),
+                    Builder(builder: (context) {
+                      final rating = MechanicData.ratingFor(booking.mechanicName);
+                      return Row(
+                        children: [
+                          StarRow(rating: rating.average),
+                          const SizedBox(width: 6),
+                          Text(rating.label, style: TextStyle(color: textSecondary, fontSize: 11)),
+                        ],
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -453,6 +444,46 @@ extension _HomeTab on _HomePageState {
           ),
         ),
       ],
+    );
+  }
+
+  /// Tombol darurat: mogok / butuh derek -> WhatsApp dengan plat nomor terisi.
+  Widget _towCard() {
+    return TapScale(
+      onTap: openTowRequest,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.danger.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.danger.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(11),
+              decoration: BoxDecoration(
+                color: AppColors.danger.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.car_crash_outlined, color: AppColors.danger),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Mogok / Butuh Derek', style: TextStyle(color: textPrimary, fontSize: 15, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 2),
+                  Text('Kirim lokasi darurat ke admin via WhatsApp', style: TextStyle(color: textSecondary, fontSize: 12)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: AppColors.danger),
+          ],
+        ),
+      ),
     );
   }
 
@@ -468,7 +499,7 @@ extension _HomeTab on _HomePageState {
             children: [
               Text(
                 'Sedang dikerjakan ${booking.mechanicName ?? 'montir'}',
-                style: const TextStyle(color: textPrimary, fontSize: 12, fontWeight: FontWeight.w600),
+                style: TextStyle(color: textPrimary, fontSize: 12, fontWeight: FontWeight.w600),
               ),
               Text(
                 '${(progress * 100).round()}%',
@@ -489,7 +520,7 @@ extension _HomeTab on _HomePageState {
           const SizedBox(height: 8),
           Text(
             'Sisa waktu ${BookingData.formatCountdown(booking.secondsToFinish)} • selesai ±${booking.formattedEstimatedFinish}',
-            style: const TextStyle(color: textSecondary, fontSize: 11),
+            style: TextStyle(color: textSecondary, fontSize: 11),
           ),
         ],
       );
@@ -512,12 +543,12 @@ extension _HomeTab on _HomePageState {
               children: [
                 Text(
                   'Antrean ke-${booking.queuePosition ?? '-'}',
-                  style: const TextStyle(color: textPrimary, fontSize: 13, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: textPrimary, fontSize: 13, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Giliran dimulai dalam ${BookingData.formatCountdown(booking.secondsToStart)} • ±${booking.formattedEstimatedStart}',
-                  style: const TextStyle(color: textSecondary, fontSize: 11),
+                  style: TextStyle(color: textSecondary, fontSize: 11),
                 ),
               ],
             ),
@@ -561,7 +592,7 @@ extension _HomeTab on _HomePageState {
                       border: Border.all(color: (done || active) ? gold : borderSubtle, width: 2),
                     ),
                     child: done
-                        ? const Icon(Icons.check, size: 13, color: background)
+                        ? Icon(Icons.check, size: 13, color: background)
                         : active
                             ? Container(width: 8, height: 8, decoration: const BoxDecoration(color: gold, shape: BoxShape.circle))
                             : null,
@@ -606,12 +637,12 @@ extension _HomeTab on _HomePageState {
           children: [
             const Icon(Icons.directions_car_outlined, color: gold, size: 34),
             const SizedBox(height: 10),
-            const Text(
+            Text(
               'Belum ada kendaraan terdaftar',
               style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            const Text(
+            Text(
               'Kendaraan otomatis terdaftar setelah kamu booking servis pertama.',
               textAlign: TextAlign.center,
               style: TextStyle(color: textSecondary, fontSize: 12),
@@ -625,7 +656,7 @@ extension _HomeTab on _HomePageState {
                   color: gold,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Text(
+                child: Text(
                   'Booking Sekarang',
                   style: TextStyle(color: background, fontWeight: FontWeight.bold),
                 ),
@@ -686,7 +717,7 @@ extension _HomeTab on _HomePageState {
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [surfaceAlt, surface],
@@ -709,9 +740,9 @@ extension _HomeTab on _HomePageState {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(active['type']!, style: const TextStyle(color: textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(active['type']!, style: TextStyle(color: textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 5),
-                    Text(active['plate']!, style: const TextStyle(color: textSecondary)),
+                    Text(active['plate']!, style: TextStyle(color: textSecondary)),
                   ],
                 ),
               ),
@@ -788,7 +819,7 @@ extension _HomeTab on _HomePageState {
                                   children: [
                                     Container(width: 6, height: 6, decoration: const BoxDecoration(color: gold, shape: BoxShape.circle)),
                                     const SizedBox(width: 6),
-                                    const Text('PROMO', style: TextStyle(color: textPrimary, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
+                                    Text('PROMO', style: TextStyle(color: textPrimary, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
                                   ],
                                 ),
                               ),
@@ -797,7 +828,7 @@ extension _HomeTab on _HomePageState {
                                 width: 210,
                                 child: Text(
                                   promo['title'] as String,
-                                  style: const TextStyle(color: textPrimary, fontSize: 20, fontWeight: FontWeight.w800, height: 1.15),
+                                  style: TextStyle(color: textPrimary, fontSize: 20, fontWeight: FontWeight.w800, height: 1.15),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -867,15 +898,15 @@ extension _HomeTab on _HomePageState {
       child: TextField(
         controller: searchController,
         onChanged: (value) => _update(() => searchQuery = value),
-        style: const TextStyle(color: textPrimary),
+        style: TextStyle(color: textPrimary),
         cursorColor: gold,
         decoration: InputDecoration(
           hintText: 'Cari layanan servis...',
-          hintStyle: const TextStyle(color: textSecondary),
+          hintStyle: TextStyle(color: textSecondary),
           prefixIcon: const Icon(Icons.search, color: gold),
           suffixIcon: searchQuery.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.close, color: textSecondary, size: 18),
+                  icon: Icon(Icons.close, color: textSecondary, size: 18),
                   onPressed: () {
                     _update(() {
                       searchController.clear();
@@ -924,7 +955,7 @@ extension _HomeTab on _HomePageState {
                 ),
               ),
               const SizedBox(width: 8),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Bengkel Resmi',
                   style: TextStyle(color: textSecondary, fontSize: 11),
@@ -944,7 +975,7 @@ extension _HomeTab on _HomePageState {
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             '4.9 (350+ ulasan)',
             style: TextStyle(
               color: textPrimary,
@@ -988,9 +1019,9 @@ extension _HomeTab on _HomePageState {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(color: textSecondary, fontSize: 12)),
+                  Text(title, style: TextStyle(color: textSecondary, fontSize: 12)),
                   const SizedBox(height: 4),
-                  Text(value, style: const TextStyle(color: textPrimary, fontWeight: FontWeight.bold)),
+                  Text(value, style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -1010,7 +1041,7 @@ extension _HomeTab on _HomePageState {
           children: [
             Icon(icon, color: gold, size: 25),
             const SizedBox(height: 9),
-            Text(title, textAlign: TextAlign.center, style: const TextStyle(color: textPrimary, fontSize: 12, fontWeight: FontWeight.w600)),
+            Text(title, textAlign: TextAlign.center, style: TextStyle(color: textPrimary, fontSize: 12, fontWeight: FontWeight.w600)),
           ],
         ),
       ),
@@ -1083,11 +1114,11 @@ extension _HomeTab on _HomePageState {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(title, maxLines: 1, overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: textPrimary, fontSize: 15, fontWeight: FontWeight.w800)),
+                        style: TextStyle(color: textPrimary, fontSize: 15, fontWeight: FontWeight.w800)),
                       const SizedBox(height: 4),
                       Expanded(
                         child: Text(description, maxLines: 2, overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(color: textSecondary, fontSize: 12, height: 1.25)),
+                          style: TextStyle(color: textSecondary, fontSize: 12, height: 1.25)),
                       ),
                       Row(
                         children: [
@@ -1129,7 +1160,7 @@ extension _HomeTab on _HomePageState {
       children: [
         Container(width: 4, height: 18, decoration: BoxDecoration(color: gold, borderRadius: BorderRadius.circular(4))),
         const SizedBox(width: 8),
-        Text(title, style: const TextStyle(color: textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+        Text(title, style: TextStyle(color: textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
       ],
     );
   }

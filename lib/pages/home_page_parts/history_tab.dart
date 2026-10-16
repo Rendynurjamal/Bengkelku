@@ -102,7 +102,7 @@ extension _HistoryTab on _HomePageState {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        const Text(
+                        Text(
                           'Belum Ada Riwayat',
                           style: TextStyle(
                             fontSize: 18,
@@ -111,7 +111,7 @@ extension _HistoryTab on _HomePageState {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
+                        Text(
                           'Riwayat booking kamu akan muncul di sini.',
                           style: TextStyle(color: textSecondary),
                         ),
@@ -119,7 +119,7 @@ extension _HistoryTab on _HomePageState {
                     ),
                   )
                 : sortedBookings.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Text(
                           'Tidak ada riwayat untuk kendaraan ini',
                           style: TextStyle(color: textSecondary),
@@ -155,15 +155,16 @@ extension _HistoryTab on _HomePageState {
                                 ),
                                 title: Text(
                                   booking.serviceName,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: textPrimary,
                                   ),
                                 ),
                                 subtitle: Text(
-                                  '${booking.vehicleType} • ${booking.plateNumber}',
+                                  '${booking.vehicleType} • ${booking.plateNumber}'
+                                  '${booking.scheduledAt != null ? '\n${booking.formattedSchedule}' : ''}',
                                   style:
-                                      const TextStyle(color: textSecondary),
+                                      TextStyle(color: textSecondary, height: 1.4),
                                 ),
                                 trailing: Container(
                                   padding: const EdgeInsets.symmetric(
@@ -232,7 +233,7 @@ extension _HistoryTab on _HomePageState {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Text(
+                  Text(
                     'Nota Servis',
                     style: TextStyle(
                       fontSize: 20,
@@ -265,8 +266,12 @@ extension _HistoryTab on _HomePageState {
                       booking.status,
                       valueColor: _statusColor(booking.status),
                     ),
+                    if (booking.scheduledAt != null)
+                      _notaRow('Jadwal', booking.formattedSchedule),
                     if (booking.mechanicName != null)
                       _notaRow('Montir', booking.mechanicName!),
+                    if (booking.isReviewed)
+                      _notaRow('Ulasan', '${'★' * booking.rating!}${'☆' * (5 - booking.rating!)}', valueColor: gold),
                     if (booking.status == 'Menunggu Antrian' &&
                         booking.queuePosition != null)
                       _notaRow(
@@ -286,6 +291,44 @@ extension _HistoryTab on _HomePageState {
                   ],
                 ),
               ),
+              if (booking.status == 'Selesai') ...[
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    if (!booking.isReviewed)
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            showReviewSheet(this.context, booking);
+                          },
+                          icon: const Icon(Icons.star_outline, color: gold),
+                          label: const Text('Beri Ulasan', style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: gold),
+                            padding: const EdgeInsets.symmetric(vertical: 13),
+                          ),
+                        ),
+                      ),
+                    if (!booking.isReviewed) const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          showReceiptSheet(this.context, booking);
+                        },
+                        icon: const Icon(Icons.receipt_long),
+                        label: const Text('Lihat Struk', style: TextStyle(fontWeight: FontWeight.bold)),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: gold,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 20),
             ],
           ),
@@ -304,7 +347,7 @@ extension _HistoryTab on _HomePageState {
             width: 110,
             child: Text(
               label,
-              style: const TextStyle(color: textSecondary, fontSize: 13),
+              style: TextStyle(color: textSecondary, fontSize: 13),
             ),
           ),
           Expanded(

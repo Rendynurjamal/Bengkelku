@@ -4,10 +4,15 @@ import 'login_page.dart';
 import 'service_page.dart';
 import 'detail_service_page.dart';
 import '../models/booking_data.dart';
+import '../models/loyalty_data.dart';
 import '../models/mechanic_data.dart';
 import '../models/vehicle_data.dart';
 import '../theme/app_colors.dart';
+import '../widgets/mechanic_widgets.dart';
+import '../widgets/receipt_sheets.dart';
+import '../widgets/schedule_picker.dart';
 import '../widgets/tap_scale.dart';
+import '../widgets/tow_dialog.dart';
 import 'about_bengkel_page.dart';
 
 part 'home_page_parts/home_tab.dart';
@@ -18,14 +23,14 @@ part 'home_page_parts/navigation.dart';
 part 'home_page_parts/dialogs.dart';
 
 // Alias warna supaya kode UI tetap ringkas (dipakai juga oleh file di home_page_parts/).
-const Color background = AppColors.background;
-const Color surface = AppColors.surface;
-const Color surfaceAlt = AppColors.surfaceAlt;
+Color get background => AppColors.background;
+Color get surface => AppColors.surface;
+Color get surfaceAlt => AppColors.surfaceAlt;
 const Color gold = AppColors.gold;
 const Color goldSoft = AppColors.goldSoft;
-const Color textPrimary = AppColors.textPrimary;
-const Color textSecondary = AppColors.textSecondary;
-const Color borderSubtle = AppColors.borderSubtle;
+Color get textPrimary => AppColors.textPrimary;
+Color get textSecondary => AppColors.textSecondary;
+Color get borderSubtle => AppColors.borderSubtle;
 
 // ============================================================
 // ROUTE TRANSISI HALUS (fade + slide)
@@ -66,14 +71,14 @@ class _HelpItem extends StatelessWidget {
     padding: const EdgeInsets.only(bottom: 12),
     child: Container(
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: const Color(0xFF14263A), borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0x263D5570))),
+      decoration: BoxDecoration(color: surfaceAlt, borderRadius: BorderRadius.circular(16), border: Border.all(color: borderSubtle)),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Icon(icon, color: const Color(0xFFFFC21A)),
+        Icon(icon, color: gold),
         const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title, style: const TextStyle(color: Color(0xFFF3F4F6), fontWeight: FontWeight.bold)),
+          Text(title, style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(description, style: const TextStyle(color: Color(0xFF9AA1AE), height: 1.35)),
+          Text(description, style: TextStyle(color: textSecondary, height: 1.35)),
         ])),
       ]),
     ),
@@ -116,6 +121,11 @@ class _HomePageState extends State<HomePage> {
         duration: const Duration(seconds: 4),
       ),
     );
+    // Minta ulasan, lalu struk digital muncul setelah ulasan dikirim.
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (!mounted || done.isReviewed) return;
+      showReviewSheet(context, done);
+    });
   }
 
   // Booking baru / status berubah -> refresh Home & Riwayat otomatis.
@@ -139,10 +149,6 @@ class _HomePageState extends State<HomePage> {
   bool compactServiceCards = false;
 
   final bool hasNotification = true;
-
-  // Rating montir (statis dulu, belum ada sistem review sungguhan)
-  final double mechanicRating = 4.8;
-  final int mechanicReviewCount = 128;
 
   // Kendaraan yang sedang dipilih di "garasi" (kunci: plat nomor)
   String? activePlate;
@@ -370,6 +376,15 @@ class _HomePageState extends State<HomePage> {
   // ============================================================
   // WHATSAPP ADMIN
   // ============================================================
+
+  void openTowRequest() {
+    final plates = garageVehicles.map((v) => v['plate']!).toList();
+    showTowSheet(
+      context,
+      knownPlates: plates,
+      initialPlate: activeVehicle?['plate'],
+    );
+  }
 
   Future<void> openWhatsApp() async {
     final Uri whatsappUrl = Uri.parse(

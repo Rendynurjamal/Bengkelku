@@ -14,7 +14,7 @@ extension _Navigation on _HomePageState {
       decoration: BoxDecoration(
         color: surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        border: const Border(top: BorderSide(color: borderSubtle)),
+        border: Border(top: BorderSide(color: borderSubtle)),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, -6))],
       ),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),

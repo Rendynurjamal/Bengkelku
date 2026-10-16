@@ -12,15 +12,27 @@ class BengkelKuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'BengkelKu',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.gold),
-        scaffoldBackgroundColor: const Color(0xFFF5F7FA),
-        fontFamily: 'Arial',
-      ),
-      home: const SplashPage(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: AppColors.themeMode,
+      builder: (context, mode, _) {
+        final brightness =
+            mode == ThemeMode.light ? Brightness.light : Brightness.dark;
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'BengkelKu',
+          themeMode: mode,
+          theme: ThemeData(
+            brightness: brightness,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.gold,
+              brightness: brightness,
+            ),
+            scaffoldBackgroundColor: AppColors.background,
+            fontFamily: 'Arial',
+          ),
+          home: const SplashPage(),
+        );
+      },
     );
   }
 }

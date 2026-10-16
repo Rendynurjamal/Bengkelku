@@ -48,7 +48,7 @@ extension _HomeDialogs on _HomePageState {
                       child: const Icon(Icons.card_giftcard, color: gold),
                     ),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'Daftar Member Baru',
                         style: TextStyle(
@@ -61,7 +61,7 @@ extension _HomeDialogs on _HomePageState {
                   ],
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   'Isi data singkat, dapatkan voucher 10% otomatis untuk booking berikutnya.',
                   style: TextStyle(color: textSecondary, fontSize: 12.5),
                 ),
@@ -70,7 +70,7 @@ extension _HomeDialogs on _HomePageState {
                 const SizedBox(height: 8),
                 TextField(
                   controller: nameCtrl,
-                  style: const TextStyle(color: textPrimary),
+                  style: TextStyle(color: textPrimary),
                   decoration: _modalFieldDecoration('Masukkan nama kamu', Icons.person_outline),
                 ),
                 const SizedBox(height: 14),
@@ -79,7 +79,7 @@ extension _HomeDialogs on _HomePageState {
                 TextField(
                   controller: phoneCtrl,
                   keyboardType: TextInputType.phone,
-                  style: const TextStyle(color: textPrimary),
+                  style: TextStyle(color: textPrimary),
                   decoration: _modalFieldDecoration('Contoh: 08123456789', Icons.phone_outlined),
                 ),
                 const SizedBox(height: 22),
@@ -112,7 +112,7 @@ extension _HomeDialogs on _HomePageState {
                         builder: (context) => AlertDialog(
                           backgroundColor: surface,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-                          title: const Row(
+                          title: Row(
                             children: [
                               Icon(Icons.celebration, color: gold, size: 28),
                               SizedBox(width: 10),
@@ -126,7 +126,7 @@ extension _HomeDialogs on _HomePageState {
                           ),
                           content: Text(
                             'Halo $name! Voucher diskon 10% sudah aktif dan akan otomatis dipakai di booking servis berikutnya.',
-                            style: const TextStyle(color: textSecondary),
+                            style: TextStyle(color: textSecondary),
                           ),
                           actions: [
                             TextButton(
@@ -182,7 +182,7 @@ extension _HomeDialogs on _HomePageState {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              const Text(
+              Text(
                 'Notifikasi',
                 style: TextStyle(
                   fontSize: 22,
@@ -201,14 +201,14 @@ extension _HomeDialogs on _HomePageState {
                   ),
                   child: const Icon(Icons.build_outlined, color: gold),
                 ),
-                title: const Text(
+                title: Text(
                   'Servis kendaraan',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: textPrimary,
                   ),
                 ),
-                subtitle: const Text(
+                subtitle: Text(
                   'Kendaraan kamu sedang dalam proses servis.',
                   style: TextStyle(color: textSecondary),
                 ),
@@ -230,18 +230,18 @@ extension _HomeDialogs on _HomePageState {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text(
+          title: Text(
             'Keluar Akun?',
             style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold),
           ),
-          content: const Text(
+          content: Text(
             'Kamu akan keluar dari akun ini.',
             style: TextStyle(color: textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
+              child: Text(
                 'Batal',
                 style: TextStyle(color: textSecondary),
               ),

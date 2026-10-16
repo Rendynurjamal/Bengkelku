@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/booking_data.dart';
 import '../models/mechanic_data.dart';
+import '../models/loyalty_data.dart';
 import '../models/vehicle_data.dart';
+import '../widgets/schedule_picker.dart';
 
 class ServicePage extends StatefulWidget {
   final String? selectedService;
@@ -29,6 +31,7 @@ class ServicePage extends StatefulWidget {
 class _ServicePageState extends State<ServicePage> {
   String? selectedService;
   String? selectedVehicle;
+  ScheduleSelection _schedule = const ScheduleSelection();
 
   final TextEditingController nameController =
       TextEditingController();
@@ -164,6 +167,19 @@ class _ServicePageState extends State<ServicePage> {
       return;
     }
 
+    if (!_schedule.isComplete) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Pilih montir, tanggal, dan jam servis dulu ya.',
+          ),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     final serviceData = findServiceData();
 
     final basePrice =
@@ -187,6 +203,11 @@ class _ServicePageState extends State<ServicePage> {
       service: selectedService!,
       servicePrice: finalPrice,
       serviceDuration: finalDuration,
+      mechanicName: _schedule.mechanic,
+      scheduledAt: _schedule.scheduledAt,
+      basePrice: basePrice,
+      discountLabel: discountLabel.isEmpty ? null : discountLabel,
+      discountPercent: _effectiveDiscount,
     );
 
     // Menugaskan montir / memasukkan ke antrean secara otomatis.
@@ -256,9 +277,22 @@ class _ServicePageState extends State<ServicePage> {
               ),
               const SizedBox(height: 6),
               Text(
+                'Jadwal: ${newBooking.formattedSchedule}',
+              ),
+              const SizedBox(height: 6),
+              Text(
                 'Total: $finalPrice',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '+${newBooking.pointsEarned} poin • Member ${LoyaltyData.level.name}',
+                style: const TextStyle(
+                  color: Color(0xFFD98306),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12.5,
                 ),
               ),
               if (discountLabel.isNotEmpty) ...[
@@ -712,6 +746,13 @@ class _ServicePageState extends State<ServicePage> {
                                   });
                                 },
                     ),
+
+                  const SizedBox(height: 24),
+
+                  SchedulePicker(
+                    light: true,
+                    onChanged: (value) => _schedule = value,
+                  ),
                 ],
               ),
             ),

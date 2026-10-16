@@ -18,14 +18,14 @@ extension _ServiceTab on _HomePageState {
             children: [
               _searchBar(),
               const SizedBox(height: 10),
-              const Text('Harga final menyesuaikan jenis kendaraan saat konfirmasi', style: TextStyle(color: textSecondary, fontSize: 11)),
+              Text('Harga final menyesuaikan jenis kendaraan saat konfirmasi', style: TextStyle(color: textSecondary, fontSize: 11)),
               const SizedBox(height: 12),
               if (filteredServices.isEmpty)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(28),
                   decoration: BoxDecoration(color: surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: borderSubtle)),
-                  child: const Column(
+                  child: Column(
                     children: [
                       Icon(Icons.search_off, color: textSecondary, size: 30),
                       SizedBox(height: 10),
@@ -99,7 +99,7 @@ extension _ServiceTab on _HomePageState {
                 color: selected ? gold : Colors.transparent,
                 border: Border.all(color: selected ? gold : textSecondary, width: 1.5),
               ),
-              child: selected ? const Icon(Icons.check, size: 15, color: background) : null,
+              child: selected ? Icon(Icons.check, size: 15, color: background) : null,
             ),
           ),
           const SizedBox(width: 12),
@@ -118,7 +118,7 @@ extension _ServiceTab on _HomePageState {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(title, style: const TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 15)),
+                        Text(title, style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 15)),
                         const SizedBox(height: 3),
                         Text(price, style: const TextStyle(color: goldSoft, fontSize: 12, fontWeight: FontWeight.w600)),
                       ],
@@ -160,7 +160,7 @@ extension _ServiceTab on _HomePageState {
                     voucherActive
                         ? '${cartTitles.length} layanan • ${BookingData.pendingVoucherLabel} aktif 🎉'
                         : '${cartTitles.length} layanan dipilih (estimasi)',
-                    style: const TextStyle(color: textSecondary, fontSize: 12),
+                    style: TextStyle(color: textSecondary, fontSize: 12),
                   ),
                   const SizedBox(height: 2),
                   if (voucherActive) ...[
@@ -168,7 +168,7 @@ extension _ServiceTab on _HomePageState {
                       children: [
                         Text(
                           _formatRupiah(total),
-                          style: const TextStyle(color: textSecondary, fontSize: 12, decoration: TextDecoration.lineThrough),
+                          style: TextStyle(color: textSecondary, fontSize: 12, decoration: TextDecoration.lineThrough),
                         ),
                         const SizedBox(width: 6),
                         Text(_formatRupiah(discountedTotal), style: const TextStyle(color: goldSoft, fontWeight: FontWeight.bold, fontSize: 17)),
@@ -199,6 +199,7 @@ extension _ServiceTab on _HomePageState {
     final ownerController = TextEditingController();
     final plateController = TextEditingController();
     String? checkoutVehicleType;
+    ScheduleSelection checkoutSchedule = const ScheduleSelection();
 
     showModalBottomSheet(
       context: context,
@@ -223,15 +224,15 @@ extension _ServiceTab on _HomePageState {
                         decoration: BoxDecoration(color: borderSubtle, borderRadius: BorderRadius.circular(10)),
                       ),
                     ),
-                    const Text('Konfirmasi Booking', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textPrimary)),
+                    Text('Konfirmasi Booking', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textPrimary)),
                     const SizedBox(height: 6),
-                    Text('${cartTitles.length} layanan dipilih — nggak perlu pilih servis lagi', style: const TextStyle(color: textSecondary, fontSize: 12)),
+                    Text('${cartTitles.length} layanan dipilih — nggak perlu pilih servis lagi', style: TextStyle(color: textSecondary, fontSize: 12)),
                     const SizedBox(height: 18),
                     _modalLabel('Nama Pemilik'),
                     const SizedBox(height: 8),
                     TextField(
                       controller: ownerController,
-                      style: const TextStyle(color: textPrimary),
+                      style: TextStyle(color: textPrimary),
                       decoration: _modalFieldDecoration('Masukkan nama pemilik', Icons.person_outline),
                     ),
                     const SizedBox(height: 14),
@@ -240,7 +241,7 @@ extension _ServiceTab on _HomePageState {
                     TextField(
                       controller: plateController,
                       textCapitalization: TextCapitalization.characters,
-                      style: const TextStyle(color: textPrimary),
+                      style: TextStyle(color: textPrimary),
                       decoration: _modalFieldDecoration('Contoh: L 1234 AB', Icons.confirmation_number_outlined),
                     ),
                     const SizedBox(height: 14),
@@ -249,7 +250,7 @@ extension _ServiceTab on _HomePageState {
                     DropdownButtonFormField<String>(
                       initialValue: checkoutVehicleType,
                       dropdownColor: surfaceAlt,
-                      style: const TextStyle(color: textPrimary),
+                      style: TextStyle(color: textPrimary),
                       decoration: _modalFieldDecoration('Pilih jenis kendaraan', Icons.directions_car_outlined),
                       items: vehicleList.map((v) => DropdownMenuItem(value: v.name, child: Text('${v.icon} ${v.name}'))).toList(),
                       onChanged: (value) => setModalState(() => checkoutVehicleType = value),
@@ -268,12 +269,17 @@ extension _ServiceTab on _HomePageState {
                                     children: [
                                       const Icon(Icons.check_circle, color: gold, size: 14),
                                       const SizedBox(width: 8),
-                                      Expanded(child: Text(t, style: const TextStyle(color: textSecondary, fontSize: 13))),
+                                      Expanded(child: Text(t, style: TextStyle(color: textSecondary, fontSize: 13))),
                                     ],
                                   ),
                                 ))
                             .toList(),
                       ),
+                    ),
+                    const SizedBox(height: 22),
+                    SchedulePicker(
+                      slotsNeeded: cartTitles.length,
+                      onChanged: (value) => checkoutSchedule = value,
                     ),
                     const SizedBox(height: 22),
                     SizedBox(
@@ -289,8 +295,14 @@ extension _ServiceTab on _HomePageState {
                             );
                             return;
                           }
+                          if (!checkoutSchedule.isComplete) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Pilih montir, tanggal, dan jam servis dulu ya.'), backgroundColor: Colors.redAccent),
+                            );
+                            return;
+                          }
                           Navigator.pop(context);
-                          _submitCartBooking(owner, plate, checkoutVehicleType!);
+                          _submitCartBooking(owner, plate, checkoutVehicleType!, checkoutSchedule);
                         },
                         style: ElevatedButton.styleFrom(backgroundColor: gold, foregroundColor: background, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
                         child: const Text('KONFIRMASI BOOKING', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -306,7 +318,7 @@ extension _ServiceTab on _HomePageState {
     );
   }
 
-  void _submitCartBooking(String owner, String plate, String vehicleType) {
+  void _submitCartBooking(String owner, String plate, String vehicleType, ScheduleSelection schedule) {
     final vehicle = vehicleList.firstWhere(
       (v) => v.name == vehicleType,
       orElse: () => vehicleList.first,
@@ -314,6 +326,11 @@ extension _ServiceTab on _HomePageState {
 
     final bool voucherActive = BookingData.pendingVoucherPercent > 0;
     final String voucherLabel = BookingData.pendingVoucherLabel ?? 'Voucher';
+
+    // Beberapa layanan dijadwalkan berurutan mulai dari jam yang dipilih.
+    final int startSlotIndex = BookingData.slotTimes.indexOf(schedule.slot!);
+    int serviceIndex = 0;
+    final List<BookingData> created = [];
 
     for (final title in cartTitles) {
       ServiceData? match;
@@ -340,6 +357,7 @@ extension _ServiceTab on _HomePageState {
       String finalPrice = match?.price ?? fallback['price'] as String;
       final finalDuration = match?.duration ?? fallback['duration'] as String;
 
+      final String basePrice = finalPrice;
       if (voucherActive) {
         final discounted = (_parsePrice(finalPrice) * (1 - BookingData.pendingVoucherPercent)).round();
         finalPrice = _formatRupiah(discounted);
@@ -352,10 +370,22 @@ extension _ServiceTab on _HomePageState {
         service: title,
         servicePrice: finalPrice,
         serviceDuration: finalDuration,
+        mechanicName: schedule.mechanic,
+        scheduledAt: BookingData.slotDateTime(
+          schedule.date!,
+          BookingData.slotTimes[startSlotIndex + serviceIndex],
+        ),
+        basePrice: basePrice,
+        discountLabel: voucherActive ? voucherLabel : null,
+        discountPercent: voucherActive ? BookingData.pendingVoucherPercent : 0,
       );
+      serviceIndex++;
+      created.add(newBooking);
 
       MechanicData.assignBooking(newBooking);
     }
+
+    final int totalPoints = created.fold(0, (sum, b) => sum + b.pointsEarned);
 
     if (voucherActive) {
       BookingData.clearVoucher();
@@ -373,7 +403,7 @@ extension _ServiceTab on _HomePageState {
         return AlertDialog(
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-          title: const Row(
+          title: Row(
             children: [
               Icon(Icons.check_circle, color: gold, size: 30),
               SizedBox(width: 10),
@@ -386,7 +416,17 @@ extension _ServiceTab on _HomePageState {
             children: [
               Text(
                 '$owner ($plate) berhasil booking. Cek statusnya di tab Riwayat.',
-                style: const TextStyle(color: textSecondary),
+                style: TextStyle(color: textSecondary),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Jadwal: ${created.first.formattedSchedule}${created.length > 1 ? ' (+${created.length - 1} layanan berikutnya)' : ''}\nMontir: ${schedule.mechanic}',
+                style: TextStyle(color: textSecondary, fontSize: 12.5, height: 1.4),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '+$totalPoints poin • Member ${LoyaltyData.level.name}',
+                style: const TextStyle(color: gold, fontSize: 12.5, fontWeight: FontWeight.bold),
               ),
               if (voucherActive) ...[
                 const SizedBox(height: 8),
@@ -412,13 +452,13 @@ extension _ServiceTab on _HomePageState {
   }
 
   Widget _modalLabel(String text) {
-    return Text(text, style: const TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 13));
+    return Text(text, style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 13));
   }
 
   InputDecoration _modalFieldDecoration(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: textSecondary),
+      hintStyle: TextStyle(color: textSecondary),
       prefixIcon: Icon(icon, color: gold),
       filled: true,
       fillColor: surfaceAlt,

@@ -54,7 +54,7 @@ class AboutBengkelPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
                       TextSpan(
                         text: 'Bengkel',
@@ -76,7 +76,7 @@ class AboutBengkelPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   'Terverifikasi & Terpercaya sejak awal berdiri',
                   style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
                 ),
@@ -102,7 +102,7 @@ class AboutBengkelPage extends StatelessWidget {
           _title('Cerita Kami'),
           const SizedBox(height: 10),
           _card(
-            child: const Text(
+            child: Text(
               'BengkelKu berawal dari sebuah bengkel kecil yang berkomitmen memberikan '
               'pelayanan servis kendaraan yang jujur, cepat, dan berkualitas. Seiring waktu, '
               'kepercayaan pelanggan membuat kami terus berkembang — kini melayani berbagai '
@@ -155,7 +155,7 @@ class AboutBengkelPage extends StatelessWidget {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text('Visi', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
                           SizedBox(height: 4),
                           Text(
@@ -176,7 +176,7 @@ class AboutBengkelPage extends StatelessWidget {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text('Misi', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
                           SizedBox(height: 4),
                           Text(
@@ -216,7 +216,7 @@ class AboutBengkelPage extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           text,
-          style: const TextStyle(color: AppColors.textPrimary, fontSize: 17, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.textPrimary, fontSize: 17, fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -247,9 +247,9 @@ class AboutBengkelPage extends StatelessWidget {
         children: [
           Icon(icon, color: AppColors.gold, size: 20),
           const SizedBox(height: 8),
-          Text(value, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(value, style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 2),
-          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+          Text(label, style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
         ],
       ),
     );
@@ -293,12 +293,12 @@ class AboutBengkelPage extends StatelessWidget {
                   const SizedBox(height: 3),
                   Text(
                     title,
-                    style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 14.5),
+                    style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 14.5),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     description,
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 12.5, height: 1.4),
+                    style: TextStyle(color: AppColors.textSecondary, fontSize: 12.5, height: 1.4),
                   ),
                 ],
               ),
@@ -323,7 +323,7 @@ class AboutBengkelPage extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
             ),
           ),
         ],

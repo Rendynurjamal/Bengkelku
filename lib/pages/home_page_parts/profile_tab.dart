@@ -40,7 +40,7 @@ extension _ProfileTab on _HomePageState {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Admin BengkelKu',
                   style: TextStyle(
                     fontSize: 21,
@@ -49,14 +49,22 @@ extension _ProfileTab on _HomePageState {
                   ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
+                Text(
                   'Pengelola BengkelKu',
                   style: TextStyle(color: textSecondary),
                 ),
               ],
             ),
           ),
+          const SizedBox(height: 16),
+          _loyaltyCard(),
           const SizedBox(height: 22),
+          _profileMenu(
+            icon: Icons.car_crash_outlined,
+            title: 'Mogok / Butuh Derek',
+            onTap: openTowRequest,
+            isDanger: true,
+          ),
           _profileMenu(
             icon: Icons.settings_outlined,
             title: 'Pengaturan',
@@ -83,6 +91,79 @@ extension _ProfileTab on _HomePageState {
     );
   }
 
+  /// Poin loyalty + level member (Bronze / Silver / Gold).
+  Widget _loyaltyCard() {
+    return ValueListenableBuilder<int>(
+      valueListenable: LoyaltyData.points,
+      builder: (context, points, _) {
+        final level = LoyaltyData.level;
+        final next = LoyaltyData.nextLevel;
+        final Color levelColor = level.name == 'Gold'
+            ? const Color(0xFFFFC107)
+            : level.name == 'Silver'
+                ? const Color(0xFFB0BEC5)
+                : const Color(0xFFCD7F32);
+
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: levelColor.withValues(alpha: 0.5)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: levelColor.withValues(alpha: 0.18),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.workspace_premium, color: levelColor),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Member ${level.name}', style: TextStyle(color: textPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text('$points poin', style: TextStyle(color: textSecondary, fontSize: 12.5)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: LoyaltyData.progressToNext,
+                  minHeight: 8,
+                  backgroundColor: surfaceAlt,
+                  valueColor: AlwaysStoppedAnimation<Color>(levelColor),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                next == null
+                    ? 'Level tertinggi tercapai 🎉'
+                    : '${next.minPoints - points} poin lagi menuju ${next.name}',
+                style: TextStyle(color: textSecondary, fontSize: 11.5),
+              ),
+              const SizedBox(height: 2),
+              Text('Setiap booking = +${LoyaltyData.basePointsPerBooking} poin, bonus 10 poin per Rp10.000.',
+                  style: TextStyle(color: textSecondary, fontSize: 11)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   // Pengaturan aplikasi: perubahan switch langsung terlihat dan aktif.
   void showAppSettings() {
     showModalBottomSheet<void>(
@@ -102,15 +183,27 @@ extension _ProfileTab on _HomePageState {
               children: [
                 Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: borderSubtle, borderRadius: BorderRadius.circular(8)))),
                 const SizedBox(height: 20),
-                const Text('Pengaturan', style: TextStyle(color: textPrimary, fontSize: 22, fontWeight: FontWeight.bold)),
+                Text('Pengaturan', style: TextStyle(color: textPrimary, fontSize: 22, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 6),
-                const Text('Atur preferensi aplikasi BengkelKu.', style: TextStyle(color: textSecondary)),
+                Text('Atur preferensi aplikasi BengkelKu.', style: TextStyle(color: textSecondary)),
                 const SizedBox(height: 14),
                 SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
+                  secondary: const Icon(Icons.dark_mode_outlined, color: gold),
+                  title: Text('Mode gelap', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
+                  subtitle: Text('Matikan untuk memakai tampilan terang', style: TextStyle(color: textSecondary)),
+                  value: AppColors.isDark,
+                  activeColor: gold,
+                  onChanged: (value) {
+                    AppColors.setDarkMode(value);
+                    setSheetState(() {});
+                  },
+                ),
+                SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
                   secondary: const Icon(Icons.notifications_active_outlined, color: gold),
-                  title: const Text('Notifikasi', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Tampilkan pemberitahuan aplikasi', style: TextStyle(color: textSecondary)),
+                  title: Text('Notifikasi', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
+                  subtitle: Text('Tampilkan pemberitahuan aplikasi', style: TextStyle(color: textSecondary)),
                   value: notificationsEnabled,
                   activeColor: gold,
                   onChanged: (value) {
@@ -121,8 +214,8 @@ extension _ProfileTab on _HomePageState {
                 SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
                   secondary: const Icon(Icons.alarm_outlined, color: gold),
-                  title: const Text('Pengingat servis', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Aktifkan pengingat perawatan kendaraan', style: TextStyle(color: textSecondary)),
+                  title: Text('Pengingat servis', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
+                  subtitle: Text('Aktifkan pengingat perawatan kendaraan', style: TextStyle(color: textSecondary)),
                   value: serviceReminderEnabled,
                   activeColor: gold,
                   onChanged: (value) {
@@ -133,8 +226,8 @@ extension _ProfileTab on _HomePageState {
                 SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
                   secondary: const Icon(Icons.view_agenda_outlined, color: gold),
-                  title: const Text('Tampilan ringkas', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Preferensi untuk tampilan daftar layanan', style: TextStyle(color: textSecondary)),
+                  title: Text('Tampilan ringkas', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
+                  subtitle: Text('Preferensi untuk tampilan daftar layanan', style: TextStyle(color: textSecondary)),
                   value: compactServiceCards,
                   activeColor: gold,
                   onChanged: (value) {
@@ -152,7 +245,7 @@ extension _ProfileTab on _HomePageState {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text('Catatan: preferensi ini belum disimpan permanen setelah aplikasi ditutup.', style: TextStyle(color: textSecondary, fontSize: 11)),
+                Text('Catatan: preferensi ini belum disimpan permanen setelah aplikasi ditutup.', style: TextStyle(color: textSecondary, fontSize: 11)),
               ],
             ),
           ),
@@ -177,9 +270,9 @@ extension _ProfileTab on _HomePageState {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Pusat Bantuan', style: TextStyle(color: textPrimary, fontSize: 22, fontWeight: FontWeight.bold)),
+              Text('Pusat Bantuan', style: TextStyle(color: textPrimary, fontSize: 22, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              const Text('Panduan singkat menggunakan BengkelKu.', style: TextStyle(color: textSecondary)),
+              Text('Panduan singkat menggunakan BengkelKu.', style: TextStyle(color: textSecondary)),
               const SizedBox(height: 16),
               const _HelpItem(icon: Icons.build_outlined, title: 'Memilih layanan', description: 'Buka tab Layanan, pilih jenis servis, lalu lihat detail dan harga sebelum melanjutkan.'),
               const _HelpItem(icon: Icons.calendar_month_outlined, title: 'Booking servis', description: 'Pilih layanan dan lengkapi informasi kendaraan serta jadwal yang tersedia.'),
@@ -231,7 +324,7 @@ extension _ProfileTab on _HomePageState {
               color: isDanger ? accent : textPrimary,
             ),
           ),
-          trailing: const Icon(Icons.chevron_right, color: textSecondary),
+          trailing: Icon(Icons.chevron_right, color: textSecondary),
         ),
       ),
     );

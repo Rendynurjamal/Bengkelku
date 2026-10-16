@@ -130,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                       const Text('BengkelKu', textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w800, letterSpacing: -.7)),
                       const SizedBox(height: 8),
-                      const Text('Rawat kendaraan, tanpa khawatir.', textAlign: TextAlign.center,
+                      Text('Rawat kendaraan, tanpa khawatir.', textAlign: TextAlign.center,
                         style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
                       const SizedBox(height: 30),
                       Container(
@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               const Text('Selamat Datang!', style: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.bold)),
                               const SizedBox(height: 6),
-                              const Text('Masuk untuk melanjutkan ke akun Anda', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                              Text('Masuk untuk melanjutkan ke akun Anda', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
                               const SizedBox(height: 22),
                               _field(controller: _nameController, label: 'Nama pengguna', icon: Icons.person_outline_rounded,
                                 validator: (v) => (v == null || v.trim().isEmpty) ? 'Nama pengguna wajib diisi' : null),
@@ -176,10 +176,10 @@ class _LoginPageState extends State<LoginPage> {
                                   onChanged: (value) => setState(() => _rememberMe = value ?? false),
                                   activeColor: AppColors.gold,
                                   checkColor: Colors.black,
-                                  side: const BorderSide(color: AppColors.textSecondary),
+                                  side: BorderSide(color: AppColors.textSecondary),
                                 )),
                                 const SizedBox(width: 7),
-                                const Expanded(child: Text('Ingat saya', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))),
+                                Expanded(child: Text('Ingat saya', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))),
                                 TextButton(onPressed: _showForgotPassword, child: const Text('Lupa password?', style: TextStyle(color: AppColors.gold, fontSize: 12))),
                               ]),
                               const SizedBox(height: 12),
@@ -190,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                                 child: const Text('Masuk', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                               )),
                               const SizedBox(height: 18),
-                              const Row(children: [Expanded(child: Divider(color: Color(0x334B6075))), Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Text('atau masuk dengan', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))), Expanded(child: Divider(color: Color(0x334B6075)))]),
+                              Row(children: [Expanded(child: Divider(color: Color(0x334B6075))), Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Text('atau masuk dengan', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))), Expanded(child: Divider(color: Color(0x334B6075)))]),
                               const SizedBox(height: 16),
                               SizedBox(height: 48, child: OutlinedButton.icon(
                                 onPressed: () => _showMessage('Login Google belum aktif. Hubungkan Firebase/Google Sign-In terlebih dahulu.'),
@@ -201,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
                               )),
                               const SizedBox(height: 18),
                               Wrap(alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                                const Text('Belum punya akun? ', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                                Text('Belum punya akun? ', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
                                 TextButton(onPressed: _showRegister, style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                                   child: const Text('Daftar', style: TextStyle(color: AppColors.gold, fontWeight: FontWeight.bold, fontSize: 13)),
                                 ),
@@ -237,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
 
   InputDecoration _decoration(String label, IconData icon) => InputDecoration(
     labelText: label,
-    labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+    labelStyle: TextStyle(color: AppColors.textSecondary, fontSize: 13),
     prefixIcon: Icon(icon, color: AppColors.gold, size: 21),
     filled: true,
     fillColor: const Color(0xFF132235),
