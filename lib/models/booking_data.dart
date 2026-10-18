@@ -278,9 +278,6 @@ class BookingData {
     );
   }
 
-  static bool _sameDay(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
-
   /// Slot sudah lewat (hari ini, jam sudah berlalu / kurang dari 30 menit lagi).
   static bool isSlotPast(DateTime date, String slot) {
     final limit = DateTime.now().add(const Duration(minutes: 30));

@@ -1078,12 +1078,15 @@ extension _HomeTab on _HomePageState {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
+                    // Foto dari internet; kalau gagal dimuat (offline / link mati)
+                    // otomatis memakai gambar lokal assets/images/svc_*.jpg.
                     Image.network(
                       _servicePhoto(title),
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: surfaceAlt,
-                        child: Icon(icon, color: gold, size: 44),
+                      errorBuilder: (context, error, stackTrace) => AppImage(
+                        AppImages.forService(title),
+                        fit: BoxFit.cover,
+                        fallbackIcon: icon,
                       ),
                     ),
                     Container(
@@ -1138,20 +1141,24 @@ extension _HomeTab on _HomePageState {
     );
   }
 
+  /// Foto tiap layanan (Unsplash). Setiap link sudah dicocokkan dengan isi fotonya.
   String _servicePhoto(String title) {
+    const q = '?auto=format&fit=crop&w=1200&q=85';
     switch (title) {
-      case 'Ganti Oli':
-        return 'https://images.unsplash.com/photo-1635784063382-9f2b7e7c6e4c?auto=format&fit=crop&w=1200&q=85';
-      case 'Servis Rem':
-        return 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=1200&q=85';
-      case 'Servis AC':
-        return 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=85';
-      case 'Servis Mesin':
-        return 'https://images.unsplash.com/photo-1486754735734-325b5831c3ad?auto=format&fit=crop&w=1200&q=85';
-      case 'Kelistrikan':
-        return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=85';
+      case 'Ganti Oli': // mekanik mengganti oli mobil
+        return 'https://images.unsplash.com/photo-1643700973089-baa86a1ab9ee$q';
+      case 'Servis Rem': // cakram dan kaliper rem
+        return 'https://images.unsplash.com/photo-1778087432647-b84c500cc302$q';
+      case 'Servis AC': // ventilasi AC mobil
+        return 'https://images.unsplash.com/photo-1542399204-b8dd4af5113d$q';
+      case 'Servis Mesin': // ruang mesin mobil
+        return 'https://images.unsplash.com/photo-1606577924006-27d39b132ae2$q';
+      case 'Kelistrikan': // mesin dan aki mobil
+        return 'https://images.unsplash.com/photo-1764122623556-90a7d480df53$q';
+      case 'Servis Transmisi': // tuas persneling
+        return 'https://images.unsplash.com/photo-1761475444241-438be34594ae$q';
       default:
-        return 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=85';
+        return 'https://images.unsplash.com/photo-1606577924006-27d39b132ae2$q';
     }
   }
 
