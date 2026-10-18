@@ -45,6 +45,7 @@ class BookingData {
   DateTime statusChangedAt;
 
   BookingData({
+    int? id,
     required this.ownerName,
     required this.plateNumber,
     required this.vehicleType,
@@ -62,7 +63,7 @@ class BookingData {
     this.queuePosition,
     this.estimatedStart,
     this.estimatedFinish,
-  }) : id = _nextId++,
+  }) : id = id ?? _nextId++,
        basePrice = basePrice ?? price,
        createdAt = createdAt ?? DateTime.now(),
        statusChangedAt = createdAt ?? DateTime.now();
@@ -80,6 +81,73 @@ class BookingData {
   static final ValueNotifier<int?> requestedTab = ValueNotifier<int?>(null);
 
   static void notifyChanged() => changes.value++;
+
+  // ============================================================
+  // PENYIMPANAN (dipakai AppStorage)
+  // ============================================================
+
+  static String? _iso(DateTime? d) => d?.toIso8601String();
+  static DateTime? _parse(Object? v) =>
+      v is String ? DateTime.tryParse(v) : null;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'ownerName': ownerName,
+        'plateNumber': plateNumber,
+        'vehicleType': vehicleType,
+        'serviceName': serviceName,
+        'price': price,
+        'duration': duration,
+        'createdAt': _iso(createdAt),
+        'status': status,
+        'mechanicName': mechanicName,
+        'scheduledAt': _iso(scheduledAt),
+        'basePrice': basePrice,
+        'discountLabel': discountLabel,
+        'discountPercent': discountPercent,
+        'rating': rating,
+        'review': review,
+        'reviewedAt': _iso(reviewedAt),
+        'pointsEarned': pointsEarned,
+        'statusChangedAt': _iso(statusChangedAt),
+      };
+
+  static BookingData fromJson(Map<String, dynamic> j) {
+    final b = BookingData(
+      id: j['id'] as int?,
+      ownerName: j['ownerName'] as String? ?? '',
+      plateNumber: j['plateNumber'] as String? ?? '',
+      vehicleType: j['vehicleType'] as String? ?? '',
+      serviceName: j['serviceName'] as String? ?? '',
+      price: j['price'] as String? ?? '',
+      duration: j['duration'] as String? ?? '',
+      createdAt: _parse(j['createdAt']),
+      status: j['status'] as String? ?? 'Menunggu Antrian',
+      mechanicName: j['mechanicName'] as String?,
+      scheduledAt: _parse(j['scheduledAt']),
+      basePrice: j['basePrice'] as String?,
+      discountLabel: j['discountLabel'] as String?,
+      discountPercent: (j['discountPercent'] as num?)?.toDouble() ?? 0,
+      pointsEarned: j['pointsEarned'] as int? ?? 0,
+    );
+    b.rating = j['rating'] as int?;
+    b.review = j['review'] as String?;
+    b.reviewedAt = _parse(j['reviewedAt']);
+    b.statusChangedAt = _parse(j['statusChangedAt']) ?? b.createdAt;
+    return b;
+  }
+
+  /// Ganti seluruh daftar booking dengan data tersimpan.
+  static void restore(List<BookingData> saved) {
+    bookings
+      ..clear()
+      ..addAll(saved);
+    for (final b in saved) {
+      if (b.id >= _nextId) _nextId = b.id + 1;
+    }
+    _recomputeQueue();
+    notifyChanged();
+  }
 
   // ============================================================
   // ANTRIAN LIVE (MODE DEMO)

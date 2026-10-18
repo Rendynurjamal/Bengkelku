@@ -175,7 +175,7 @@ extension _HomeTab on _HomePageState {
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.only(bottom: 4, right: 4),
                       itemCount: filteredServices.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 14),
+                      separatorBuilder: (_, _) => const SizedBox(width: 14),
                       itemBuilder: (context, i) {
                         final service = filteredServices[i];
                         final title = service['title'] as String;
@@ -678,7 +678,7 @@ extension _HomeTab on _HomePageState {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: garage.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            separatorBuilder: (_, _) => const SizedBox(width: 10),
             itemBuilder: (context, index) {
               final v = garage[index];
               final bool isActive = v['plate'] == activePlate;

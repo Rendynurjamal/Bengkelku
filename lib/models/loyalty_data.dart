@@ -24,6 +24,8 @@ class LoyaltyData {
 
   /// Tambah poin untuk sebuah booking dengan harga akhir [finalPrice]
   /// (mis. "Rp80.000" atau "GRATIS"). Mengembalikan poin yang didapat.
+  static void restore(int value) => points.value = value;
+
   static int award(String finalPrice) {
     final digits = finalPrice.replaceAll(RegExp(r'[^0-9]'), '');
     final amount = digits.isEmpty ? 0 : int.parse(digits);

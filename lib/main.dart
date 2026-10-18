@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'models/app_storage.dart';
 import 'pages/splash_page.dart';
 import 'theme/app_colors.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppStorage.init();
   runApp(const BengkelKuApp());
 }
 

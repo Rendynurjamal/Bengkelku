@@ -76,7 +76,7 @@ class AppImage extends StatelessWidget {
               child: child,
             );
           },
-          errorBuilder: (_, __, ___) => Container(
+          errorBuilder: (_, _, _) => Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,

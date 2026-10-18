@@ -193,7 +193,7 @@ extension _ProfileTab on _HomePageState {
                   title: Text('Mode gelap', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
                   subtitle: Text('Matikan untuk memakai tampilan terang', style: TextStyle(color: textSecondary)),
                   value: AppColors.isDark,
-                  activeColor: gold,
+                  activeThumbColor: gold,
                   onChanged: (value) {
                     AppColors.setDarkMode(value);
                     setSheetState(() {});
@@ -205,7 +205,7 @@ extension _ProfileTab on _HomePageState {
                   title: Text('Notifikasi', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
                   subtitle: Text('Tampilkan pemberitahuan aplikasi', style: TextStyle(color: textSecondary)),
                   value: notificationsEnabled,
-                  activeColor: gold,
+                  activeThumbColor: gold,
                   onChanged: (value) {
                     setSheetState(() => notificationsEnabled = value);
                     if (mounted) _update(() {});
@@ -217,7 +217,7 @@ extension _ProfileTab on _HomePageState {
                   title: Text('Pengingat servis', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
                   subtitle: Text('Aktifkan pengingat perawatan kendaraan', style: TextStyle(color: textSecondary)),
                   value: serviceReminderEnabled,
-                  activeColor: gold,
+                  activeThumbColor: gold,
                   onChanged: (value) {
                     setSheetState(() => serviceReminderEnabled = value);
                     if (mounted) _update(() {});
@@ -229,7 +229,7 @@ extension _ProfileTab on _HomePageState {
                   title: Text('Tampilan ringkas', style: TextStyle(color: textPrimary, fontWeight: FontWeight.w600)),
                   subtitle: Text('Preferensi untuk tampilan daftar layanan', style: TextStyle(color: textSecondary)),
                   value: compactServiceCards,
-                  activeColor: gold,
+                  activeThumbColor: gold,
                   onChanged: (value) {
                     setSheetState(() => compactServiceCards = value);
                     if (mounted) _update(() {});
