@@ -1078,12 +1078,13 @@ extension _HomeTab on _HomePageState {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Foto layanan lokal (assets/images/svc_*.jpg): selalu tampil,
-                    // tidak bergantung internet, dan sesuai jenis layanan.
-                    AppImage(
-                      AppImages.forService(title),
+                    Image.network(
+                      _servicePhoto(title),
                       fit: BoxFit.cover,
-                      fallbackIcon: icon,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: surfaceAlt,
+                        child: Icon(icon, color: gold, size: 44),
+                      ),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -1135,6 +1136,23 @@ extension _HomeTab on _HomePageState {
         ),
       ),
     );
+  }
+
+  String _servicePhoto(String title) {
+    switch (title) {
+      case 'Ganti Oli':
+        return 'https://images.unsplash.com/photo-1635784063382-9f2b7e7c6e4c?auto=format&fit=crop&w=1200&q=85';
+      case 'Servis Rem':
+        return 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=1200&q=85';
+      case 'Servis AC':
+        return 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=85';
+      case 'Servis Mesin':
+        return 'https://images.unsplash.com/photo-1486754735734-325b5831c3ad?auto=format&fit=crop&w=1200&q=85';
+      case 'Kelistrikan':
+        return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=85';
+      default:
+        return 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=85';
+    }
   }
 
   Widget _sectionTitle(String title) {
